@@ -19,14 +19,17 @@ const Todo = () => {
 
   const [todo, setTodo] = React.useState({
     taskWriter: authUser?.displayName,
-    taskWriterEmail: authUser?.email,
+    taskWriterEmail: "",
     taskDescription: '',
     taskCompleted : false
     
   });
 
+  console.log(todo);
+
   const handleAddTask = (e) => {
     e.preventDefault();
+    setTodo({ ...todo, taskWriterEmail: authUser?.email || e.target.taskWriterEmail.value });
     console.log(todo);
      if(authUser){
        axiosPrivate
@@ -53,6 +56,7 @@ const Todo = () => {
   }
 
 
+
     return (
       <div className>
         <h1 className="text-center text-primary ">
@@ -64,6 +68,7 @@ const Todo = () => {
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 value={authUser?.email}
+                name="taskWriterEmail"
                 required
                 disabled={authUser?.email ? true : false}
                 type="email"
@@ -75,6 +80,10 @@ const Todo = () => {
               <Form.Control
                 disabled={authUser?.displayName ? true : false}
                 value={authUser?.displayName}
+                name="taskWriter"
+                onChange={(e) =>
+                  setTodo({ ...todo, taskWriter:  e.target.value })
+                }
                 type="text"
                 required
                 placeholder="name@example.com"
