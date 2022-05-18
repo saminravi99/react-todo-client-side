@@ -8,13 +8,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import toast from "react-hot-toast";
 import axiosPrivate from "../../api/axiosPrivate";
 import auth from "../firebase.init";
+import Loading from "../Loading/Loading";
 
 const Tasks = () => {
   const [todoList, setTodoList] = React.useState([]);
   const [authUser] = useAuthState(auth);
   const [reload, setReload] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
+    setLoading(true);
     axiosPrivate
       .get(`https://arcane-escarpment-31102.herokuapp.com/tasks/${authUser?.email}`, {
         headers: {
@@ -25,6 +28,7 @@ const Tasks = () => {
         console.log(response);
         const { data } = response;
         setTodoList(data);
+        setLoading(false);
       });
   }, [authUser?.email, reload]);
 
@@ -122,7 +126,10 @@ const Tasks = () => {
   return (
     <div className="padding-nav">
       <h1 className="text-center text-success">Your To Do List</h1>
-      <div className="container">{todo}</div>
+      <div className="container">{
+        loading ? <Loading></Loading>
+        : todo
+      }</div>
     </div>
   );
 };
