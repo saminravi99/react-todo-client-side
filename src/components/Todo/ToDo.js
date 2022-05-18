@@ -20,6 +20,7 @@ const Todo = () => {
   const [todo, setTodo] = React.useState({
     taskWriter: authUser?.displayName,
     taskWriterEmail: "",
+    taskName:"",
     taskDescription: '',
     taskCompleted : false
     
