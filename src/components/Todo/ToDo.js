@@ -2,7 +2,7 @@ import {
   faFilePen
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from 'react';
+import React , {useEffect} from 'react';
 import { Form } from 'react-bootstrap';
 import { useAuthState } from "react-firebase-hooks/auth";
 import toast from 'react-hot-toast';
@@ -30,31 +30,36 @@ const Todo = () => {
 
   const handleAddTask = (e) => {
     e.preventDefault();
-    setTodo({ ...todo, taskWriterEmail: authUser?.email || e.target.taskWriterEmail.value });
-    console.log(todo);
-     if(authUser){
-       axiosPrivate
-         .post("https://arcane-escarpment-31102.herokuapp.com/task", todo, {
-           headers: {
-             email: authUser?.email,
-           },
-         })
-         .then((response) => {
-           console.log(response);
-           const { status } = response;
-           if (status === 200) {
-             toast.success("Task Added Successfully");
-             e.target.reset();
-           } else {
-             toast.error("Task Not Added");
-           }
-         });
-     }
-      else{
+      console.log(todo);
+      if (authUser) {
+        axiosPrivate
+          .post("https://arcane-escarpment-31102.herokuapp.com/task", todo, {
+            headers: {
+              email: authUser?.email,
+            },
+          })
+          .then((response) => {
+            console.log(response);
+            const { status } = response;
+            if (status === 200) {
+              toast.success("Task Added Successfully");
+              e.target.reset();
+            } else {
+              toast.error("Task Not Added");
+            }
+          });
+      } else {
         toast.error("Please Login First");
         e.target.reset();
       }
+    
   }
+
+  useEffect(() => {
+    setTodo({ ...todo, taskWriterEmail: authUser?.email })
+  }
+    , [authUser?.email,  todo.taskName ])
+
 
 
 
@@ -70,6 +75,7 @@ const Todo = () => {
               <Form.Control
                 value={authUser?.email}
                 name="taskWriterEmail"
+                
                 required
                 disabled={authUser?.email ? true : false}
                 type="email"
